@@ -76,7 +76,7 @@ public GetTop10(Handle:owner, Handle:hndl, const String:error[], any:serial)
 	}
 		
 	new Handle:panel = CreatePanel();
-	SetPanelTitle(panel, "ТОП10 богачей");
+	SetPanelTitle(panel, "Top 10 richest players");
 	
 	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	DrawPanelText(panel, "-----------------------------");
@@ -100,12 +100,12 @@ public GetTop10(Handle:owner, Handle:hndl, const String:error[], any:serial)
 	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
 	SetPanelCurrentKey(panel, 8);
-	DrawPanelItem(panel, "Назад");
+	DrawPanelItem(panel, "Back");
 	
 	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
 	SetPanelCurrentKey(panel, 10);
-	DrawPanelItem(panel, "Выход");
+	DrawPanelItem(panel, "Exit");
 	
 	SendPanelToClient(panel, client, PanelHandler, 30);
 	CloseHandle(panel);
