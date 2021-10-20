@@ -37,7 +37,7 @@ public Shop_Started()
 
 public FunctionDisplay(client, String:buffer[], maxlength)
 {
-	strcopy(buffer, maxlength, "ТОП10 богачей");
+	strcopy(buffer, maxlength, "Top 10 richest players");
 }
 
 public bool:FunctionSelect(client)
