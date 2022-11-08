@@ -1,14 +1,15 @@
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 #include <shop>
 
-#define PLUGIN_VERSION	"2.0.1"
+#define PLUGIN_VERSION	"2.0.2"
 
-new Handle:dp;
-new String:dp_prefix[16];
+Handle dp;
+char dp_prefix[16];
 
-public Plugin:myinfo = 
+public Plugin myinfo = 
 {
 	name = "[Shop] Top10 Function",
 	author = "FrozDark",
@@ -17,17 +18,17 @@ public Plugin:myinfo =
 	url = "http://www.hlmod.ru/"
 };
 
-public OnPluginStart()
+public void OnPluginStart()
 {
 	if (Shop_IsStarted()) Shop_Started();
 }
 
-public OnPluginEnd()
+public void OnPluginEnd()
 {
 	Shop_UnregisterMe();
 }
 
-public Shop_Started()
+public void Shop_Started()
 {
 	dp = Shop_GetDatabase();
 	Shop_GetDatabasePrefix(dp_prefix, sizeof(dp_prefix));
@@ -35,21 +36,21 @@ public Shop_Started()
 	Shop_AddToFunctionsMenu(FunctionDisplay, FunctionSelect);
 }
 
-public FunctionDisplay(client, String:buffer[], maxlength)
+public void FunctionDisplay(int client, char[] buffer, int maxlength)
 {
 	strcopy(buffer, maxlength, "Top 10 richest players");
 }
 
-public bool:FunctionSelect(client)
+public bool FunctionSelect(int client)
 {
-	decl String:query[256];
+	char query[256];
 	FormatEx(query, sizeof(query), "SELECT `name`, `money` FROM `%splayers` ORDER BY `money` DESC LIMIT 10", dp_prefix);
 	SQL_TQuery(dp, GetTop10, query, GetClientSerial(client));
 	
 	return true;
 }
 
-public GetTop10(Handle:owner, Handle:hndl, const String:error[], any:serial) 
+public void GetTop10(Handle owner, Handle hndl, const char[] error, any serial) 
 { 
 	if (hndl == INVALID_HANDLE || error[0]) 
 	{ 
@@ -58,13 +59,13 @@ public GetTop10(Handle:owner, Handle:hndl, const String:error[], any:serial)
 		return;
 	}
 	
-	new client = GetClientFromSerial(serial);
+	int client = GetClientFromSerial(serial);
 	if (!client)
 	{
 		return;
 	}
 	
-	new count = SQL_GetRowCount(hndl);
+	int count = SQL_GetRowCount(hndl);
 	if (count > 10)
 	{
 		count = 10;
@@ -75,15 +76,15 @@ public GetTop10(Handle:owner, Handle:hndl, const String:error[], any:serial)
 		return;
 	}
 		
-	new Handle:panel = CreatePanel();
+	Handle panel = CreatePanel();
 	SetPanelTitle(panel, "Top 10 richest players");
 	
 	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	DrawPanelText(panel, "-----------------------------");
 	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
-	decl String:display[128], String:name[MAX_NAME_LENGTH+1], money;
-	for (new i = 1; i <= count; i++)
+	char display[128], name[MAX_NAME_LENGTH + 1], money;
+	for (int i = 1; i <= count; i++)
 	{
 		SQL_FetchRow(hndl);
 		
@@ -111,7 +112,7 @@ public GetTop10(Handle:owner, Handle:hndl, const String:error[], any:serial)
 	CloseHandle(panel);
 }
 
-public PanelHandler(Handle:menu, MenuAction:action, param1, param2)
+public int PanelHandler(Menu menu, MenuAction action, int param1, int param2)
 {
 	switch (param2)
 	{
@@ -120,4 +121,5 @@ public PanelHandler(Handle:menu, MenuAction:action, param1, param2)
 			Shop_ShowFunctionsMenu(param1);
 		}
 	}
+	return 0;
 }
