@@ -2,25 +2,35 @@
 #pragma newdecls required
 
 #include <sourcemod>
-#include <shop>
 
-#define PLUGIN_VERSION	"2.0.2"
+#include <shop>
 
 Handle dp;
 char dp_prefix[16];
+
+bool g_bLate = false;
 
 public Plugin myinfo = 
 {
 	name = "[Shop] Top10 Function",
 	author = "FrozDark",
 	description = "Adds top10 function to the shop",
-	version = PLUGIN_VERSION,
+	version = "2.0.2",
 	url = "http://www.hlmod.ru/"
 };
 
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	g_bLate = late;
+	return APLRes_Success;
+}
+
 public void OnPluginStart()
 {
-	if (Shop_IsStarted()) Shop_Started();
+	if (g_bLate && Shop_IsStarted())
+	{
+		Shop_Started();
+	}
 }
 
 public void OnPluginEnd()
