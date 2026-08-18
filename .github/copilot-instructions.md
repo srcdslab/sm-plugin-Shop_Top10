@@ -8,7 +8,7 @@ This repository contains a SourceMod plugin that extends the Shop Core system wi
 - **Language**: SourcePawn (.sp files)
 - **Platform**: SourceMod 1.11+ for Source engine games
 - **Integration**: Depends on Shop Core plugin (srcdslab/sm-plugin-Shop-Core)
-- **Build System**: SourceKnight (configured via sourceknight.yaml)
+- **Build System**: Native GitHub Actions (configured via .github/workflows/ci.yml)
 - **Database**: Async SQL queries for player data
 
 ## Project Structure
@@ -16,7 +16,6 @@ This repository contains a SourceMod plugin that extends the Shop Core system wi
 ```
 addons/sourcemod/scripting/
 ├── Shop_Top10.sp          # Main plugin source code
-sourceknight.yaml          # Build configuration and dependencies
 .github/workflows/ci.yml   # CI/CD pipeline for building/releasing
 ```
 
@@ -85,20 +84,21 @@ SQL_Query(database, query);
 
 ## Build System
 
-### SourceKnight Configuration
-- **Build tool**: SourceKnight manages dependencies and compilation
-- **Dependencies**: Auto-downloads SourceMod and Shop Core includes
-- **Output**: Compiled .smx files in `/addons/sourcemod/plugins`
+### GitHub Actions Configuration
+- **Build tool**: Native GitHub Actions workflow (`.github/workflows/ci.yml`)
+- **Compiler**: `rumblefrog/setup-sp@v1.3.1` installs SourcePawn compiler for SourceMod 1.12.x
+- **Dependencies**: Shop Core include files are cloned directly from `srcdslab/sm-plugin-Shop-Core` during the workflow
+- **Output**: Compiled .smx files in `addons/sourcemod/plugins`
 
 ### Local Development
 ```bash
-# Dependencies are managed automatically by SourceKnight
-# Build process downloads SourceMod 1.11.0-git6917 and Shop Core includes
+# Clone the Shop Core include dependency and compile with spcomp,
+# mirroring the steps in .github/workflows/ci.yml
 ```
 
 ### CI/CD Pipeline
 - **Triggers**: Push, PR, manual dispatch
-- **Build**: Uses `maxime1907/action-sourceknight@v1`
+- **Build**: Native GitHub Actions job using `rumblefrog/setup-sp@v1.3.1`
 - **Release**: Auto-creates releases for master/main and tags
 - **Artifacts**: Packaged as .tar.gz with proper directory structure
 
