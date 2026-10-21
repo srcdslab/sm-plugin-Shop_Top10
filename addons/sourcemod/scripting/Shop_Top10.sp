@@ -5,7 +5,7 @@
 
 #include <shop>
 
-Handle dp;
+Database dp;
 char dp_prefix[16];
 
 bool g_bLate = false;
@@ -15,7 +15,7 @@ public Plugin myinfo =
 	name = "[Shop] Top10 Function",
 	author = "FrozDark",
 	description = "Adds top10 function to the shop",
-	version = "2.0.2",
+	version = "2.0.3",
 	url = "http://www.hlmod.ru/"
 };
 
@@ -55,14 +55,14 @@ public bool FunctionSelect(int client)
 {
 	char query[256];
 	FormatEx(query, sizeof(query), "SELECT `name`, `money` FROM `%splayers` ORDER BY `money` DESC LIMIT 10", dp_prefix);
-	SQL_TQuery(dp, GetTop10, query, GetClientSerial(client));
+	dp.Query(GetTop10, query, GetClientSerial(client));
 	
 	return true;
 }
 
-public void GetTop10(Handle owner, Handle hndl, const char[] error, any serial) 
+public void GetTop10(Database owner, DBResultSet hndl, const char[] error, any serial) 
 { 
-	if (hndl == INVALID_HANDLE || error[0]) 
+	if (hndl == null || error[0]) 
 	{ 
 		LogError("GetTop10: %s", error);
 		
@@ -75,7 +75,7 @@ public void GetTop10(Handle owner, Handle hndl, const char[] error, any serial)
 		return;
 	}
 	
-	int count = SQL_GetRowCount(hndl);
+	int count = hndl.RowCount;
 	if (count > 10)
 	{
 		count = 10;
@@ -86,40 +86,40 @@ public void GetTop10(Handle owner, Handle hndl, const char[] error, any serial)
 		return;
 	}
 		
-	Handle panel = CreatePanel();
-	SetPanelTitle(panel, "Top 10 richest players");
+	Panel panel = new Panel();
+	panel.SetTitle("Top 10 richest players");
 	
-	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
-	DrawPanelText(panel, "-----------------------------");
-	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
+	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
+	panel.DrawText("-----------------------------");
+	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
 	char display[128], name[MAX_NAME_LENGTH + 1], money;
 	for (int i = 1; i <= count; i++)
 	{
-		SQL_FetchRow(hndl);
+		hndl.FetchRow();
 		
-		SQL_FetchString(hndl, 0, name, sizeof(name));
-		money = SQL_FetchInt(hndl, 1);
+		hndl.FetchString(0, name, sizeof(name));
+		money = hndl.FetchInt(1);
 		
 		FormatEx(display, sizeof(display), "%i. %s [%d]", i, name, money);
 		
-		DrawPanelText(panel, display);
+		panel.DrawText(display);
 	}
 	
-	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
-	DrawPanelText(panel, "-----------------------------");
-	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
+	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
+	panel.DrawText("-----------------------------");
+	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
-	SetPanelCurrentKey(panel, 8);
-	DrawPanelItem(panel, "Back");
+	panel.CurrentKey = 8;
+	panel.DrawItem("Back");
 	
-	DrawPanelItem(panel, " ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
+	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
-	SetPanelCurrentKey(panel, 10);
-	DrawPanelItem(panel, "Exit");
+	panel.CurrentKey = 10;
+	panel.DrawItem("Exit");
 	
-	SendPanelToClient(panel, client, PanelHandler, 30);
-	CloseHandle(panel);
+	panel.Send(client, PanelHandler, 30);
+	delete panel;
 }
 
 public int PanelHandler(Menu menu, MenuAction action, int param1, int param2)
