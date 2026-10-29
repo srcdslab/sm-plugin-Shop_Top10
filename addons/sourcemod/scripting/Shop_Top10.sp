@@ -5,8 +5,16 @@
 
 #include <shop>
 
+#define TOP10_CACHE_TIME 60
+
 Database dp;
 char dp_prefix[16];
+
+// Cached result of the last top10 query, shared by every player
+char g_sTopName[10][MAX_NAME_LENGTH + 1];
+int g_iTopMoney[10];
+int g_iTopCount;
+int g_iTopCacheTime;
 
 bool g_bLate = false;
 
@@ -15,7 +23,7 @@ public Plugin myinfo =
 	name = "[Shop] Top10 Function",
 	author = "FrozDark",
 	description = "Adds top10 function to the shop",
-	version = "2.0.3",
+	version = "2.0.4",
 	url = "http://www.hlmod.ru/"
 };
 
@@ -40,7 +48,9 @@ public void OnPluginEnd()
 
 public void Shop_Started()
 {
+	delete dp;
 	dp = Shop_GetDatabase();
+	g_iTopCacheTime = 0;
 	Shop_GetDatabasePrefix(dp_prefix, sizeof(dp_prefix));
 	
 	Shop_AddToFunctionsMenu(FunctionDisplay, FunctionSelect);
@@ -53,6 +63,17 @@ public void FunctionDisplay(int client, char[] buffer, int maxlength)
 
 public bool FunctionSelect(int client)
 {
+	if (g_iTopCacheTime && GetTime() - g_iTopCacheTime < TOP10_CACHE_TIME)
+	{
+		ShowTop10(client);
+		return true;
+	}
+	
+	if (dp == null)
+	{
+		return false;
+	}
+	
 	char query[256];
 	FormatEx(query, sizeof(query), "SELECT `name`, `money` FROM `%splayers` ORDER BY `money` DESC LIMIT 10", dp_prefix);
 	dp.Query(GetTop10, query, GetClientSerial(client));
@@ -69,18 +90,27 @@ public void GetTop10(Database owner, DBResultSet hndl, const char[] error, any s
 		return;
 	}
 	
+	g_iTopCount = 0;
+	while (g_iTopCount < sizeof(g_iTopMoney) && hndl.FetchRow())
+	{
+		hndl.FetchString(0, g_sTopName[g_iTopCount], sizeof(g_sTopName[]));
+		g_iTopMoney[g_iTopCount] = hndl.FetchInt(1);
+		g_iTopCount++;
+	}
+	g_iTopCacheTime = GetTime();
+	
 	int client = GetClientFromSerial(serial);
 	if (!client)
 	{
 		return;
 	}
 	
-	int count = hndl.RowCount;
-	if (count > 10)
-	{
-		count = 10;
-	}
-	else if (!count)
+	ShowTop10(client);
+}
+
+void ShowTop10(int client)
+{
+	if (!g_iTopCount)
 	{
 		Shop_ShowFunctionsMenu(client);
 		return;
@@ -93,15 +123,10 @@ public void GetTop10(Database owner, DBResultSet hndl, const char[] error, any s
 	panel.DrawText("-----------------------------");
 	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
-	char display[128], name[MAX_NAME_LENGTH + 1], money;
-	for (int i = 1; i <= count; i++)
+	char display[128];
+	for (int i = 0; i < g_iTopCount; i++)
 	{
-		hndl.FetchRow();
-		
-		hndl.FetchString(0, name, sizeof(name));
-		money = hndl.FetchInt(1);
-		
-		FormatEx(display, sizeof(display), "%i. %s [%d]", i, name, money);
+		FormatEx(display, sizeof(display), "%i. %s [%d]", i + 1, g_sTopName[i], g_iTopMoney[i]);
 		
 		panel.DrawText(display);
 	}
