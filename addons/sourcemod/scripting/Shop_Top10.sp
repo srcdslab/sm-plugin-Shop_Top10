@@ -23,7 +23,7 @@ public Plugin myinfo =
 	name = "[Shop] Top10 Function",
 	author = "FrozDark",
 	description = "Adds top10 function to the shop",
-	version = "2.0.4",
+	version = "2.0.5",
 	url = "http://www.hlmod.ru/"
 };
 
@@ -35,6 +35,8 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 
 public void OnPluginStart()
 {
+	LoadTranslations("Shop_Top10.phrases");
+
 	if (g_bLate && Shop_IsStarted())
 	{
 		Shop_Started();
@@ -58,7 +60,7 @@ public void Shop_Started()
 
 public void FunctionDisplay(int client, char[] buffer, int maxlength)
 {
-	strcopy(buffer, maxlength, "Top 10 richest players");
+	FormatEx(buffer, maxlength, "%T", "Top10 Richest Players", client);
 }
 
 public bool FunctionSelect(int client)
@@ -116,14 +118,16 @@ void ShowTop10(int client)
 		return;
 	}
 		
+	char display[128];
+	FormatEx(display, sizeof(display), "%T", "Top10 Richest Players", client);
+
 	Panel panel = new Panel();
-	panel.SetTitle("Top 10 richest players");
+	panel.SetTitle(display);
 	
 	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	panel.DrawText("-----------------------------");
 	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
-	char display[128];
 	for (int i = 0; i < g_iTopCount; i++)
 	{
 		FormatEx(display, sizeof(display), "%i. %s [%d]", i + 1, g_sTopName[i], g_iTopMoney[i]);
@@ -136,12 +140,14 @@ void ShowTop10(int client)
 	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
 	panel.CurrentKey = 8;
-	panel.DrawItem("Back");
+	FormatEx(display, sizeof(display), "%T", "Top10 Back", client);
+	panel.DrawItem(display);
 	
 	panel.DrawItem(" ", ITEMDRAW_SPACER|ITEMDRAW_RAWLINE);
 	
 	panel.CurrentKey = 10;
-	panel.DrawItem("Exit");
+	FormatEx(display, sizeof(display), "%T", "Top10 Exit", client);
+	panel.DrawItem(display);
 	
 	panel.Send(client, PanelHandler, 30);
 	delete panel;
