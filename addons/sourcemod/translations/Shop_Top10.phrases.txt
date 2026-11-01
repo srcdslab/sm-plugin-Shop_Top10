@@ -1,0 +1,33 @@
+"Phrases"
+{
+	"Top10 Richest Players"
+	{
+		"en"		"Top 10 richest players"
+		"fr"		"Top 10 des joueurs les plus riches"
+		"ru"		"Топ-10 самых богатых игроков"
+		"es"		"Top 10 de los jugadores más ricos"
+		"de"		"Top 10 der reichsten Spieler"
+		"pt"		"Top 10 jogadores mais ricos"
+		"chi"		"最富有玩家前10名"
+	}
+	"Top10 Back"
+	{
+		"en"		"Back"
+		"fr"		"Retour"
+		"ru"		"Назад"
+		"es"		"Atrás"
+		"de"		"Zurück"
+		"pt"		"Voltar"
+		"chi"		"返回"
+	}
+	"Top10 Exit"
+	{
+		"en"		"Exit"
+		"fr"		"Quitter"
+		"ru"		"Выход"
+		"es"		"Salir"
+		"de"		"Beenden"
+		"pt"		"Sair"
+		"chi"		"退出"
+	}
+}
