@@ -23,7 +23,7 @@ public Plugin myinfo =
 	name = "[Shop] Top10 Function",
 	author = "FrozDark",
 	description = "Adds top10 function to the shop",
-	version = "2.0.5",
+	version = "2.0.6",
 	url = "http://www.hlmod.ru/"
 };
 
