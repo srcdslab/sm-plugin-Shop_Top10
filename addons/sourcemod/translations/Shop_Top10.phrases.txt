@@ -9,6 +9,12 @@
 		"de"		"Top 10 der reichsten Spieler"
 		"pt"		"Top 10 jogadores mais ricos"
 		"chi"		"最富有玩家前10名"
+		"pl"		"Top 10 najbogatszych graczy"
+		"tr"		"10 en zengin oyuncu"
+		"it"		"Top 10 dei giocatori più ricchi"
+		"ua"		"Топ-10 найбагатших гравців"
+		"zho"		"前10名最富有玩家"
+		"cze"		"Top 10 nejbohatších hráčů"
 	}
 	"Top10 Back"
 	{
@@ -19,6 +25,12 @@
 		"de"		"Zurück"
 		"pt"		"Voltar"
 		"chi"		"返回"
+		"pl"		"Wstecz"
+		"tr"		"Geri"
+		"it"		"Indietro"
+		"ua"		"Назад"
+		"zho"		"返回"
+		"cze"		"Zpět"
 	}
 	"Top10 Exit"
 	{
@@ -29,5 +41,11 @@
 		"de"		"Beenden"
 		"pt"		"Sair"
 		"chi"		"退出"
+		"pl"		"Wyjście"
+		"tr"		"Çıkış"
+		"it"		"Esci"
+		"ua"		"Вихід"
+		"zho"		"退出"
+		"cze"		"Konec"
 	}
 }
